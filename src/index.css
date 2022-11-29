@@ -24,6 +24,8 @@
 @import url(./blocks/place/__like-counter/place__like-counter.css);
 @import url(./blocks/place/__like/_click/place__like_click_active.css);
 @import url(./blocks/place/__delite-button/place__delite-button.css);
+@import url(./blocks/place/__delite-button/_hidden/place__delite-button_hidden.css);
+@import url(./blocks/place/__delite-button/_visible/place__delite-button_visible.css);
 @import url(./blocks/footer/footer.css);
 @import url(./blocks/footer/__copyright/footer__copyright.css);
 @import url(./blocks/pop-up/pop-up.css);

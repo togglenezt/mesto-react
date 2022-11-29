@@ -4,7 +4,8 @@ import Main from './Main';
 import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
-
+import CurrentUserContext from '../contexts/CurrentUserContext';
+import api from '../utils/api';
 
 
 
@@ -15,6 +16,25 @@ function App() {
   const [isAddPlacePopupOpen, setAddPlaceState] = React.useState(false);
   const [isImagePopupOpen, setImagePopupState] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState({});
+  const [currentUser, setCurrentUser] = React.useState({});
+
+  React.useEffect(() => {
+    api.getUserInfo()
+      .then((data) => {
+        setCurrentUser(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }, [])
+
+
+
+
+
+
+
+
 
   function handleCardClick(card) {
     setSelectedCard(card);
@@ -43,15 +63,15 @@ function App() {
 
 
   return (
-    <>
+    <CurrentUserContext.Provider value={currentUser}>
       <Header />
       <Main
         onEditProfile={handleEditProfileClick}
         onAddPlace={handleAddPlaceClick}
         onEditAvatar={handleEditAvatarClick}
         onCardClick={handleCardClick}
-       />
-       
+      />
+
       <Footer />
       <PopupWithForm
         name="edit"
@@ -76,7 +96,7 @@ function App() {
         onClose={closeAllPopups}
       >
         <>
-        <input type="text" placeholder="Название" className="form__field form__field_type_place-name" name="name" id="place-name-input" required minLength="2" maxLength="30" />
+          <input type="text" placeholder="Название" className="form__field form__field_type_place-name" name="name" id="place-name-input" required minLength="2" maxLength="30" />
           <span className="form__text-error place-name-input-error"></span>
           <input type="url" placeholder="Ссылка на картинку" className="form__field form__field_type_place-link" id="place-link-input" name="link" required />
           <span className="form__text-error place-link-input-error"></span>
@@ -91,7 +111,7 @@ function App() {
         onClose={closeAllPopups}
       >
         <>
-        <input type="url" placeholder="Ссылка на аватарку" className="form__field form__field_type_avatar-link" id="avatar-input" name="avatar" required />
+          <input type="url" placeholder="Ссылка на аватарку" className="form__field form__field_type_avatar-link" id="avatar-input" name="avatar" required />
           <span className="form__text-error avatar-input-error"></span>
         </>
       </PopupWithForm>
@@ -100,13 +120,13 @@ function App() {
         name="avatar"
         title="Вы уверены?"
         buttonText="Да" />
-        
-      <ImagePopup 
+
+      <ImagePopup
         isOpen={isImagePopupOpen}
         card={selectedCard}
         onClose={closeAllPopups}
-        />
-    </>
+      />
+    </CurrentUserContext.Provider>
   );
 }
 
