@@ -1,46 +1,11 @@
 import React from 'react';
 import Card from './Card';
-import api from '../utils/api';
 import CurrentUserContext from '../contexts/CurrentUserContext';
 
 function Main(props) {
+
     const currentUser = React.useContext(CurrentUserContext);
-    const [cards, setCards] = React.useState([]);
-
-    function handleCardLike(card) {
-        const isLiked = card.likes.some(i => i._id === currentUser._id);
     
-        api.changeLikeCardStatus(isLiked, card._id)
-          .then((updateCard) => {
-            const updatedCards = cards.map((c) => (c._id === card._id ? updateCard : c))
-            setCards(updatedCards);
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-      }
-
-      function handleCardDelete(card) {
-        api.deleteCard(card._id)
-          .then(() => {
-            const updatedCards = cards.filter((c) => (c._id !== card._id))
-            setCards(updatedCards)
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-      }
-
-    React.useEffect(() => {
-        api.getCards()
-            .then((data) => {
-                setCards(data);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-    }, [])
-
     return (
         <main className="content">
             <section className="profile" aria-label="Профиль">
@@ -60,13 +25,13 @@ function Main(props) {
                 <button className="profile__add-button" type="button" onClick={props.onAddPlace}></button>
             </section>
             <section className="gallery" aria-label="Фото галлерея">
-                {cards.map(card => (
+                {props.cards.map(card => (
                     <Card
                         key={card._id}
                         card={card}
                         onCardClick={props.onCardClick}
-                        onCardLike={handleCardLike}
-                        onCardDeleteClick={handleCardDelete}
+                        onCardLike={props.onCardLike}
+                        onCardDeleteClick={props.onCardDeleteClick}
                     />
                 ))}
             </section>
