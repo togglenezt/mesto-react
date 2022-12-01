@@ -1,27 +1,26 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
+import useForm from '../hooks/useForm';
 
 export default function AddPlacePopup(props) {
 
+    const {
+        values,
+        errors,
+        isElementValid,
+        handleElementChange,
+        resetFormInputs
+    } = useForm({});
 
     function handleSubmit(e) {
         e.preventDefault();
 
-        props.onAddPlace({name, link});
+        props.onAddPlace(values);
     }
 
-    const [name, setName] = React.useState('');
-    const [link, setLink] = React.useState('');
-
-    // Обработчик изменения инпута имени
-    function handleChangeName(e) {
-        setName(e.target.value);
-    }
-
-    // Обработчик изменения инпута О себе
-    function handleChangeLink(e) {
-        setLink(e.target.value);
-    }
+    React.useEffect(() => {
+        resetFormInputs();
+    }, [resetFormInputs, props.isOpen]);
 
     return (
         <PopupWithForm
@@ -31,31 +30,37 @@ export default function AddPlacePopup(props) {
             isOpen={props.isOpen}
             onClose={props.onClose}
             onSubmit={handleSubmit}
+            isDisabled={!isElementValid}
         >
             <>
                 <input
                     type="text"
                     placeholder="Название"
-                    className="form__field form__field_type_place-name"
+                    className={errors.name ? "form__field form__field_type_error" : "form__field"}
                     name="name"
                     id="place-name-input"
                     required minLength="2"
                     maxLength="30"
-                    value={name || ""}
-                    onChange={handleChangeName}
+                    value={values.name || ""}
+                    onChange={handleElementChange}
                 />
-                <span className="form__text-error place-name-input-error"></span>
+                <span className={errors.name ? "form__text-error form__field_type_active" : "form__text-error"}>
+                    {errors.name}
+                </span>
+
                 <input
                     type="url"
                     placeholder="Ссылка на картинку"
-                    className="form__field form__field_type_place-link"
+                    className={errors.link ? "form__field form__field_type_error" : "form__field"}
                     id="place-link-input"
                     name="link"
                     required
-                    value={link || ""}
-                    onChange={handleChangeLink}
+                    value={values.link || ""}
+                    onChange={handleElementChange}
                 />
-                <span className="form__text-error place-link-input-error"></span>
+                <span className={errors.name ? "form__text-error form__field_type_active" : "form__text-error"}>
+                    {errors.link}
+                </span>
             </>
         </PopupWithForm>
     )
