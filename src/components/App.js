@@ -2,13 +2,13 @@ import React from 'react';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
-import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import CurrentUserContext from '../contexts/CurrentUserContext';
 import api from '../utils/api';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
+import DeletePopup from './DeletePopup';
 
 function App() {
 
@@ -16,6 +16,7 @@ function App() {
   const [isEditProfilePopupOpen, setEditProfileState] = React.useState(false);
   const [isAddPlacePopupOpen, setAddPlaceState] = React.useState(false);
   const [isImagePopupOpen, setImagePopupState] = React.useState(false);
+  const [isDeletePopupOpen, setDeletePopupState] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState({});
   const [currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
@@ -59,6 +60,7 @@ function App() {
       .then(() => {
         const updatedCards = cards.filter((c) => (c._id !== card._id))
         setCards(updatedCards)
+        closeAllPopups();
       })
       .catch((err) => {
         console.log(err);
@@ -88,6 +90,7 @@ function App() {
     setEditProfileState(false);
     setAddPlaceState(false);
     setImagePopupState(false);
+    setDeletePopupState(false);
     setSelectedCard({});
   }
 
@@ -125,6 +128,11 @@ function App() {
       })
   }
 
+  function handleCardDeleteClick(card) {
+    setSelectedCard(card);
+    setDeletePopupState(true);
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <Header />
@@ -134,7 +142,7 @@ function App() {
         onEditAvatar={handleEditAvatarClick}
         onCardClick={handleCardClick}
         onCardLike={handleCardLike}
-        onCardDeleteClick={handleCardDelete}
+        onCardDeleteClick={handleCardDeleteClick}
         cards={cards}
       />
 
@@ -152,24 +160,25 @@ function App() {
         onUpdateAvatar={handleUpdateAvatar}
       />
 
-<AddPlacePopup
-          isOpen={isAddPlacePopupOpen}
-          onClose={closeAllPopups}
-          onAddPlace={handleAddPlace}
-        />
-
-
-
-      <PopupWithForm
-        name="avatar"
-        title="Вы уверены?"
-        buttonText="Да" />
+      <AddPlacePopup
+        isOpen={isAddPlacePopupOpen}
+        onClose={closeAllPopups}
+        onAddPlace={handleAddPlace}
+      />
 
       <ImagePopup
         isOpen={isImagePopupOpen}
         card={selectedCard}
         onClose={closeAllPopups}
       />
+
+      <DeletePopup
+        isOpen={isDeletePopupOpen}
+        onClose={closeAllPopups}
+        onDeleteCard={handleCardDelete}
+        selectedCard={selectedCard}
+      />
+
     </CurrentUserContext.Provider>
   );
 }
